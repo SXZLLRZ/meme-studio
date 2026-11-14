@@ -1,0 +1,27 @@
+{
+  "stage": "p7_delivery",
+  "gallery_dir": "C:\\Users\\23018\\Desktop\\测试",
+  "runtime_dir": "runtime",
+  "gallery_limits": {
+    "max_image_mib": 24,
+    "max_image_pixels": 24000000
+  },
+  "api": {
+    "text_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "media_base_url": "https://dashscope.aliyuncs.com/api/v1",
+    "text_model": "qwen-plus",
+    "image_model": "wanx2.1-imageedit",
+    "video_model": "wan2.6-i2v-flash",
+    "verified_with_account": true,
+    "verification_scope": "One text request, one instruction image edit, one 3-second 720P silent video; all succeeded. Masks and multi-turn behavior not tested."
+  },
+  "video_defaults": {
+    "resolution": "720P",
+    "duration": 3,
+    "audio": false
+  },
+  "planned_local_models": {
+    "retrieval": "Chinese-CLIP ViT-B-16",
+    "segmentation": "SAM 2.1 Tiny"
+  }
+}

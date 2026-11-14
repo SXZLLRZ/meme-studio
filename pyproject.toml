@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "meme-studio"
+version = "0.1.0"
+description = "Local personal-gallery meme studio"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "gradio>=6,<7",
+    "numpy>=1.26.4,<2",
+    "Pillow>=11,<13",
+    "fonttools>=4.55,<5",
+    "httpx>=0.28,<1",
+    "python-dotenv>=1,<2",
+]
+
+[project.optional-dependencies]
+models = ["torch==2.8.0", "torchvision==0.23.0"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+meme_studio = ["migrations/*.sql"]
