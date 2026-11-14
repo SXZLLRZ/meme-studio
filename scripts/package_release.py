@@ -15,14 +15,11 @@ ROOT_FILES = (
     "requirements.lock", "requirements-models.lock",
 )
 SOURCE_FILES = {"src": {".py", ".sql"}, "tests": {".py"}, "docs": {".md"}, "scripts": {".py"}}
-MEDIA_FILES = {
-    "gallery-source.png": "demo/gallery/source.png",
-    "p4-mask.png": "demo/media/p4-mask.png",
-    "p4-static.png": "demo/media/p4-static.png",
-    "static-caption.png": "demo/media/static-caption.png",
-    "p7-live-caption.mp4": "demo/media/p7-live-caption.mp4",
-    "p7-live-caption.gif": "demo/media/p7-live-caption.gif",
-}
+DEMO_FILES = (
+    "demo/README.md", "demo/gallery/source.png", "demo/media/p4-mask.png",
+    "demo/media/p4-static.png", "demo/media/static-caption.png",
+    "demo/media/p7-live-caption.mp4", "demo/media/p7-live-caption.gif",
+)
 PERSONAL_WINDOWS_PATH = re.compile(r"[A-Za-z]:\\Users\\[^\\\n]+(?:\\[^" + r'"\x60\n|]+' + r")?")
 TOKEN = re.compile(r"(?i)(?:\bsk-[a-z0-9]{20,}|\b(?:x-oss-signature|ossaccesskeyid|x-amz-signature)=)")
 BUNDLE = "meme-studio"
@@ -53,15 +50,12 @@ def files() -> dict[str, bytes]:
     settings["api"].pop("verified_with_account", None)
     settings["api"].pop("verification_scope", None)
     entries["settings.json"] = (json.dumps(settings, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
-    source = ROOT / "runtime" / "p7-share-media"
-    for local, target in MEDIA_FILES.items():
-        path = source / local
+    for target in DEMO_FILES:
+        path = ROOT / target
         if not path.exists():
-            if local.startswith("p7-live"):
-                continue
-            raise ValueError(f"Synthetic demonstration sample missing: {local}")
+            raise ValueError(f"Synthetic demonstration sample missing: {target}")
         if path.resolve() != path or path.stat().st_size > 16 * 1024**2:
-            raise ValueError(f"Invalid synthetic demonstration sample: {local}")
+            raise ValueError(f"Invalid synthetic demonstration sample: {target}")
         entries[target] = path.read_bytes()
     return entries
 

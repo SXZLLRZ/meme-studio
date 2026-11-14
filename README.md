@@ -2,6 +2,28 @@
 
 当前实现 **P7 整合验收与课程交付**。真实静态到动态路径和云端文字复测已通过，见阶段记录。
 
+## 首次安装
+
+使用 Windows x64 和 Python 3.11。在下载并解压的仓库根目录打开 PowerShell：
+
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.lock
+.\.venv\Scripts\python.exe -m pip check
+.\start.cmd --check
+.\start.cmd
+```
+
+基础安装可以导入图片、手工选区、本机配字、管理历史和导出 PNG。中文语义检索、SAM 点选分割和视频处理分别需要本地模型及 FFmpeg，准备方法见 [安装复现](docs/安装复现.md)。权重和 FFmpeg 不随源码上传。
+
+云端功能需要自己的密钥。先复制空模板，再在本机编辑 `.env`：
+
+```powershell
+Copy-Item -LiteralPath .env.example -Destination .env
+```
+
+已有 `.env` 时直接使用原文件，不重复复制。未配置密钥也可使用本地功能。
+
 ## 启动
 
 在此项目目录双击 `start.cmd`，或在 PowerShell 中运行：
@@ -18,11 +40,11 @@
 .\start.cmd --port 7861 --no-browser
 ```
 
-打开页面的「本地状态」查看 Python、SQLite、数据库版本及密钥是否已配置。页面目前会禁用尚未开放的功能按钮。
+打开页面的「本地状态」查看 Python、SQLite、数据库版本及密钥是否已配置。缺少模型、视频工具或密钥时，页面会显示相应提示。
 
 ## 使用图库
 
-1. 在「图库与检索」打开默认图库，点击「导入目录」读取桌面「测试」，或更改目录。也可多选本地文件后点「导入已选文件」。
+1. 在「图库与检索」打开默认图库，点击「导入目录」读取仓库自带的 `demo/gallery` 合成图片，或更改为自己的图库目录。也可多选本地文件后点「导入已选文件」。
 2. 查看导入统计和索引状态，输入中文描述，点击「中文检索」。点击卡片查看所选图片 ID。
 3. 可给图片保存标签、按标签过滤、移出当前图库或建立另一册。缺少模型时可以用「浏览全部」手动选图。
 4. 用同一个目录再导入一次，正常应显示新增 0，索引新增编码 0。重启后仍可使用已建索引。
@@ -74,7 +96,7 @@
 
 ## 配置与数据
 
-- 普通设置保存在 `settings.json`。相对目录以项目根目录为基准。默认图库由配置决定，提交包使用 demo/gallery 的合成示例。
+- 普通设置保存在 `settings.json`。相对目录以项目根目录为基准。默认图库为 `demo/gallery`，包含可分享的合成示例，可在页面或配置中更换。
 - 同名配置按环境变量、`.env`、`settings.json` 的顺序读取。可用 MEME_STUDIO_GALLERY_DIR 指定图库，用 MEME_STUDIO_RUNTIME_DIR 指定项目内的数据子目录。
 - API 密钥保存在本地 `.env`，或通过环境变量 DASHSCOPE_API_KEY 提供。启动只显示是否存在密钥。
 - 数据库保存在 `runtime/app.sqlite3`，应用日志在 `runtime/logs/app.log`。分享源码时排除 `.env`、`.venv/`、`runtime/` 和模型权重。
@@ -97,4 +119,29 @@ py -3.11 -m venv .venv
 - [开发任务清单](docs/开发任务清单.md)
 - [P1 交接记录](docs/P1-阶段记录.md)
 
-P0 的环境检查、一次文本、一次整图编辑和一次图生视频连通性记录保存在 `runtime/`。历史接口脚本用于保留验证背景，应用入口不执行这些脚本。P7 详见 [阶段记录](docs/P7-阶段记录.md)、[课程报告](docs/课程报告.md) 和 [演示与答辩](docs/演示与答辩.md)。
+P0 至 P7 的本机运行记录保存在开发机 `runtime/`，不随公开仓库上传。仓库提供阶段说明及 [合成演示素材](demo/README.md)，历史媒体只作已完成产物展示。P7 详见 [阶段记录](docs/P7-阶段记录.md)、[课程报告](docs/课程报告.md) 和 [演示与答辩](docs/演示与答辩.md)。
+
+## 目录与源码交付
+
+```text
+app.py                 应用入口
+start.cmd              Windows 启动与检查
+.env.example           空密钥模板
+settings.json          可移植的普通配置
+src/meme_studio/        检索 分割 编辑 版本 云端任务和导出
+tests/                 P1 至 P7 的 33 项离线测试
+docs/                  安装 技术说明 阶段记录与演示步骤
+demo/gallery/          合成测试原图
+demo/media/            合成素材的蒙版 静态结果与历史视频
+scripts/               源码打包脚本
+```
+
+公开仓库不包含真实密钥、个人图库、运行数据库、虚拟环境和模型权重。`.gitignore` 排除这些内容及 Python 缓存。
+
+在项目目录运行以下命令，可用仓库文件直接生成带 SHA-256 清单的源码包：
+
+```powershell
+.\.venv\Scripts\python.exe scripts/package_release.py dist/meme-studio-source.zip
+```
+
+当前仓库整理与验证范围见 [仓库交付记录](docs/仓库交付记录.md)。课程组别、成员及实际分工由提交者在正式结课报告中填写。
